@@ -16,5 +16,5 @@ export const isFirebaseConfigured = Object.values(firebaseConfig).every(Boolean)
 
 const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
-export const db = getFirestore(firebaseApp);
+export const db = getFirestore(firebaseApp, 'default');
 export const storage = getStorage(firebaseApp);
