@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -41,6 +41,8 @@ export default function App() {
   const [message, setMessage] = useState(null);
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [search, setSearch] = useState('');
+  const [program, setProgram] = useState(null);
 
   useEffect(() => {
     if (!isFirebaseConfigured) {
@@ -184,6 +186,20 @@ export default function App() {
 
   const resetForm = () => { setForm(emptyForm); setPhoto(null); setEditingId(null); };
 
+  const programs = useMemo(
+    () => Array.from(new Set(students.map((s) => s.course).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
+    [students],
+  );
+
+  const filteredStudents = useMemo(() => {
+    const needle = search.trim().toLowerCase();
+    return students.filter((s) => {
+      if (program && (s.course || '') !== program) return false;
+      if (!needle) return true;
+      return [s.name, s.course, s.email].some((value) => (value || '').toLowerCase().includes(needle));
+    });
+  }, [students, search, program]);
+
   const renderStudent = ({ item }) => (
     <View style={styles.studentRow}>
       {item.profileImageUrl ? <Image source={{ uri: item.profileImageUrl }} style={styles.avatar} /> : <View style={[styles.avatarFallback, { backgroundColor: accentsFor(item.name).bg }]}><Text style={styles.avatarText}>{item.name?.charAt(0)?.toUpperCase() || '?'}</Text></View>}
@@ -261,12 +277,56 @@ export default function App() {
 
           <View style={styles.listHeader}>
             <Text style={styles.sectionTitle}>Directory</Text>
-            <Text style={styles.count}>{students.length} {students.length === 1 ? 'student' : 'students'}</Text>
+            <Text style={styles.count}>
+              {search.trim() || program
+                ? `${filteredStudents.length} match${filteredStudents.length === 1 ? '' : 'es'}`
+                : `${students.length} ${students.length === 1 ? 'student' : 'students'}`}
+            </Text>
           </View>
           {reading ? (
             <ActivityIndicator color="#32d6ae" style={styles.loader} />
           ) : (
-            <FlatList data={students} keyExtractor={(item) => item.id} renderItem={renderStudent} scrollEnabled={false} ListEmptyComponent={<Text style={styles.empty}>No records yet. Add the first student above.</Text>} />
+            <>
+              <View style={styles.searchBox}>
+                <Feather name="search" size={16} color="#7d8ea0" />
+                <TextInput
+                  value={search}
+                  onChangeText={setSearch}
+                  placeholder="Search name, course, or email…"
+                  placeholderTextColor="#7d8ea0"
+                  style={styles.searchInput}
+                  accessibilityLabel="Search students"
+                />
+                {search.length > 0 && (
+                  <Pressable onPress={() => setSearch('')} accessibilityLabel="Clear search" hitSlop={8}>
+                    <Feather name="x-circle" size={16} color="#7d8ea0" />
+                  </Pressable>
+                )}
+              </View>
+              {programs.length > 0 && (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipRow}>
+                  <Pressable style={[styles.chip, !program && styles.chipActive]} onPress={() => setProgram(null)}>
+                    <Text style={[styles.chipText, !program && styles.chipTextActive]}>All programs</Text>
+                  </Pressable>
+                  {programs.map((p) => (
+                    <Pressable key={p} style={[styles.chip, program === p && styles.chipActive]} onPress={() => setProgram(program === p ? null : p)}>
+                      <Text style={[styles.chipText, program === p && styles.chipTextActive]}>{p}</Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              )}
+              <FlatList
+                data={filteredStudents}
+                keyExtractor={(item) => item.id}
+                renderItem={renderStudent}
+                scrollEnabled={false}
+                ListEmptyComponent={
+                  <Text style={styles.empty}>
+                    {students.length === 0 ? 'No records yet. Add the first student above.' : 'No students match your search or filter.'}
+                  </Text>
+                }
+              />
+            </>
           )}
         </ScrollView>
 
@@ -342,6 +402,13 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.6 },
   listHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 28, marginBottom: 12 },
   count: { color: '#8ba0b1', fontSize: 13 },
+  searchBox: { flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: '#12181f', borderWidth: 1, borderColor: '#2e3945', borderRadius: 10, height: 45, paddingHorizontal: 13 },
+  searchInput: { flex: 1, color: '#edf1f4', fontSize: 14, paddingVertical: 0 },
+  chipRow: { gap: 8, paddingVertical: 12, paddingHorizontal: 1 },
+  chip: { backgroundColor: '#1c232d', borderWidth: 1, borderColor: '#2e3945', borderRadius: 999, paddingHorizontal: 13, paddingVertical: 7 },
+  chipActive: { backgroundColor: 'rgba(50, 214, 174, 0.14)', borderColor: '#32d6ae' },
+  chipText: { color: '#a4b4c2', fontSize: 12, fontWeight: '700' },
+  chipTextActive: { color: '#32d6ae' },
   loader: { marginTop: 24 },
   empty: { color: '#8ba0b1', textAlign: 'center', padding: 24, fontSize: 14 },
   studentRow: { backgroundColor: '#1c232d', borderWidth: 1, borderColor: '#2e3945', borderRadius: 13, padding: 12, flexDirection: 'row', alignItems: 'center', marginBottom: 9 },
