@@ -1,0 +1,32 @@
+{"_e":"root:init","_t":1789656073690,"format":"v0-jsonl","version":"57.0.24"}
+{"_e":"env:mode","_t":1789656073693,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1789656073696,"mode":"development","files":["../../../.env"],"env":{"EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyB8zVB9--ZskbdN8oguSZvDPR47oKYSfb0","EXPO_PUBLIC_FIREBASE_APP_ID":"1:847983500512:web:73c4c823a1c1458c9e4485","EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN":"fir-activity-b4280.firebaseapp.com","EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID":"G-DKCJQK6RB","EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"847983500512","EXPO_PUBLIC_FIREBASE_PROJECT_ID":"fir-activity-b4280","EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET":"fir-activity-b4280.firebasestorage.app"}}
+{"_e":"devserver:start","_t":1789656079393,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1789656081018,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1789656083108,"plugins":[]}
+{"_e":"metro:server_log","_t":1789656087597,"level":"error","data":["An unknown error occurred while installing React Native DevTools. Details:\n\n/workspaces/firebase_activity/node_modules/@react-native/debugger-shell/bin/react-native-devtools: error while loading shared libraries: libatk-1.0.so.0: cannot open shared object file: No such file or directory\n"]}
+{"_e":"metro:instantiate","_t":1789656089091,"atlas":false,"workers":1,"host":"::","port":8081}
+{"_e":"root:init","_t":1789656987289,"format":"v0-jsonl","version":"57.0.24"}
+{"_e":"env:mode","_t":1789656987294,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1789656987297,"mode":"development","files":["../../../.env"],"env":{"EXPO_PUBLIC_FIREBASE_API_KEY":"AIzaSyB8zVB9--ZskbdN8oguSZvDPR47oKYSfb0","EXPO_PUBLIC_FIREBASE_APP_ID":"1:847983500512:web:73c4c823a1c1458c9e4485","EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN":"fir-activity-b4280.firebaseapp.com","EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID":"G-DKCJQK6RB","EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID":"847983500512","EXPO_PUBLIC_FIREBASE_PROJECT_ID":"fir-activity-b4280","EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET":"fir-activity-b4280.firebasestorage.app"}}
+{"_e":"devserver:start","_t":1789656990592,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../../../app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1789656990927,"serverRoot":"../../..","projectRoot":"../../..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"metro:server_log","_t":1789656991094,"level":"error","data":["An unknown error occurred while installing React Native DevTools. Details:\n\n/workspaces/firebase_activity/node_modules/@react-native/debugger-shell/bin/react-native-devtools: error while loading shared libraries: libatk-1.0.so.0: cannot open shared object file: No such file or directory\n"]}
+{"_e":"expo:dev-tools-plugin:load","_t":1789656991232,"plugins":[]}
+{"_e":"metro:instantiate","_t":1789656996034,"atlas":false,"workers":1,"host":"::","port":8082}
+{"_e":"metro:bundling:started","_t":1789657034636,"id":"1","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1789657034637,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1789657034655,"id":"1","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:failed","_t":1789657034752,"id":"1","message":"node_modules/expo/AppEntry.js: [BABEL] /workspaces/firebase_activity/node_modules/expo/AppEntry.js: .plugins is not a valid Plugin property","importStack":null,"filename":null,"targetModuleName":null,"originModulePath":null}
+{"_e":"metro:bundling:started","_t":1789657078063,"id":"3","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1789657078064,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1789657078067,"id":"3","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:failed","_t":1789657078070,"id":"3","message":"node_modules/expo/AppEntry.js: [BABEL] /workspaces/firebase_activity/node_modules/expo/AppEntry.js: .plugins is not a valid Plugin property","importStack":null,"filename":null,"targetModuleName":null,"originModulePath":null}
+{"_e":"metro:bundling:started","_t":1789658517584,"id":"5","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1789658517584,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1789658517586,"id":"5","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:failed","_t":1789658517588,"id":"5","message":"node_modules/expo/AppEntry.js: [BABEL] /workspaces/firebase_activity/node_modules/expo/AppEntry.js: .plugins is not a valid Plugin property","importStack":null,"filename":null,"targetModuleName":null,"originModulePath":null}
+{"_e":"metro:bundling:started","_t":1789658577298,"id":"7","platform":"web","environment":null,"entry":"node_modules/expo/AppEntry.js"}
+{"_e":"metro:bundling:progress","_t":1789658577299,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:progress","_t":1789658577301,"id":"7","progress":0,"total":1,"current":0}
+{"_e":"metro:bundling:failed","_t":1789658577303,"id":"7","message":"node_modules/expo/AppEntry.js: [BABEL] /workspaces/firebase_activity/node_modules/expo/AppEntry.js: .plugins is not a valid Plugin property","importStack":null,"filename":null,"targetModuleName":null,"originModulePath":null}
