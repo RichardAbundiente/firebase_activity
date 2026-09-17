@@ -99,13 +99,40 @@ export default function App() {
     return true;
   };
 
+  // Try Cloud Storage first (the supported path once a bucket exists); if the
+  // project has no provisioned bucket (404 on Spark plan), store the photo as a
+  // compact data URI directly in the Firestore document instead.
   const uploadPhoto = async (uri, studentId) => {
     const response = await fetch(uri);
     const blob = await response.blob();
-    const imageRef = ref(storage, `student-profiles/${studentId}-${Date.now()}.jpg`);
-    await uploadBytes(imageRef, blob, { contentType: 'image/jpeg' });
-    return getDownloadURL(imageRef);
+    if (blob.size > 900_000) {
+      throw new Error('Photo is too large after compression. Please choose a smaller image.');
+    }
+    try {
+      const imageRef = ref(storage, `student-profiles/${studentId}-${Date.now()}.jpg`);
+      await uploadBytes(imageRef, blob, { contentType: 'image/jpeg' });
+      return getDownloadURL(imageRef);
+    } catch (error) {
+      const code = error?.code || '';
+      if (code !== 'storage/unauthorized' && code !== 'storage/unknown' && !/not found|not exist/i.test(error?.message || '')) {
+        throw error;
+      }
+      const dataUri = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error('Could not read the chosen photo.'));
+        reader.readAsDataURL(blob);
+      });
+      if (dataUri.length > 1_400_000) {
+        throw new Error('Photo is too large to store inline. Please choose a smaller image.');
+      }
+      return dataUri;
+    }
   };
+
+  // Local image URIs: file:// (native) and blob:/content: (web/native).
+  // Remote URLs and data: URIs are already persisted and must not re-upload.
+  const isLocalImage = (uri) => !!uri && /^(file:|blob:|content:)/.test(uri);
 
   const saveStudent = async () => {
     if (!isFirebaseConfigured) {
@@ -127,12 +154,12 @@ export default function App() {
         updatedAt: serverTimestamp(),
       };
       if (editingId) {
-        if (photo && photo.startsWith('file://')) data.profileImageUrl = await uploadPhoto(photo, editingId);
+        if (isLocalImage(photo)) data.profileImageUrl = await uploadPhoto(photo, editingId);
         await updateDoc(doc(db, 'students', editingId), data);
         setMessage({ type: 'success', text: 'Student record updated.' });
       } else {
         const created = await addDoc(collection(db, 'students'), { ...data, createdAt: serverTimestamp() });
-        if (photo) await updateDoc(doc(db, 'students', created.id), { profileImageUrl: await uploadPhoto(photo, created.id) });
+        if (isLocalImage(photo)) await updateDoc(doc(db, 'students', created.id), { profileImageUrl: await uploadPhoto(photo, created.id) });
         setMessage({ type: 'success', text: 'Student record saved.' });
       }
       resetForm();
@@ -162,8 +189,9 @@ export default function App() {
     if (!student || deleting) return;
     setDeleting(true);
     try {
-      // Best effort: also remove the profile photo from Cloud Storage.
-      if (student.profileImageUrl) {
+      // Best effort: also remove the profile photo from Cloud Storage
+      // (inline data-URI photos live in the doc itself and need no cleanup).
+      if (student.profileImageUrl && !student.profileImageUrl.startsWith('data:')) {
         try {
           const objectPath = decodeURIComponent(
             new URL(student.profileImageUrl).pathname.split('/o/')[1] || '',
