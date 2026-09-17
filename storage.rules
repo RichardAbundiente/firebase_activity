@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Test-mode style rules: allow reads/writes from any signed-in context.
+// The app has no auth yet, so this mirrors the open Firestore rules and
+// should be tightened (e.g. with App Check + auth) before real use.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /student-profiles/{fileName} {
+      allow read: if true;
+      allow write: if request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+    match /{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}

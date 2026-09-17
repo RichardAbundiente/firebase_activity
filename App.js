@@ -79,7 +79,13 @@ export default function App() {
       aspect: [1, 1],
       quality: 0.75,
     });
-    if (!result.canceled) setPhoto(result.assets[0].uri);
+    if (!result.canceled) {
+      const resized = await resizeForUpload(result.assets[0]);
+      setPhoto((current) => {
+        if (current && current.startsWith('blob:')) URL.revokeObjectURL(current);
+        return resized;
+      });
+    }
   };
 
   const validate = () => {
@@ -97,6 +103,32 @@ export default function App() {
       return false;
     }
     return true;
+  };
+
+  // Downscales the picked image to a 512px square JPEG on web so it always
+  // fits the inline data-URI limit; native keeps the picker's compressed output.
+  const resizeForUpload = async (asset) => {
+    if (Platform.OS !== 'web' || !asset?.uri) return asset?.uri || null;
+    try {
+      const img = new Image();
+      img.src = asset.uri;
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = () => reject(new Error('Could not load the chosen image.'));
+      });
+      const size = 512;
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const side = Math.min(img.naturalWidth || img.width, img.naturalHeight || img.height);
+      ctx.drawImage(img, ((img.naturalWidth || img.width) - side) / 2, ((img.naturalHeight || img.height) - side) / 2, side, side, 0, 0, size, size);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8));
+      if (!blob) return asset.uri;
+      return URL.createObjectURL(blob);
+    } catch {
+      return asset.uri;
+    }
   };
 
   // Try Cloud Storage first (the supported path once a bucket exists); if the
@@ -212,7 +244,14 @@ export default function App() {
     }
   };
 
-  const resetForm = () => { setForm(emptyForm); setPhoto(null); setEditingId(null); };
+  const resetForm = () => {
+    setPhoto((current) => {
+      if (current && current.startsWith('blob:')) URL.revokeObjectURL(current);
+      return null;
+    });
+    setForm(emptyForm);
+    setEditingId(null);
+  };
 
   const programs = useMemo(
     () => Array.from(new Set(students.map((s) => s.course).filter(Boolean))).sort((a, b) => a.localeCompare(b)),
@@ -273,7 +312,7 @@ export default function App() {
               {photo ? <Image source={{ uri: photo }} style={styles.photoPreview} /> : <View style={styles.photoPlaceholder}><Feather name="camera" size={22} color="#32d6ae" /></View>}
               <View>
                 <Text style={styles.photoTitle}>{photo ? 'Change profile picture' : 'Add profile picture'}</Text>
-                <Text style={styles.photoHint}>Optional · stored in Cloud Storage</Text>
+                <Text style={styles.photoHint}>Optional · compressed automatically</Text>
               </View>
             </Pressable>
             <View style={styles.field}>
