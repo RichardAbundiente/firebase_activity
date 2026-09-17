@@ -8,9 +8,6 @@
     "web": {
       "bundler": "metro"
     },
-    "splash": {
-      "backgroundColor": "#f7f8f4"
-    },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
