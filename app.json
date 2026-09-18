@@ -8,14 +8,22 @@
     "web": {
       "bundler": "metro"
     },
-    "assetBundlePatterns": ["**/*"],
+    "splash": {
+      "backgroundColor": "#f7f8f4"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#f7f8f4"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "plugins": [
       [
@@ -24,6 +32,12 @@
           "photosPermission": "Allow Student Directory to use profile photos."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "e02bba3a-d28b-4855-a7ba-75fc529da8d6"
+      }
+    },
+    "owner": "richard21allens-team"
   }
 }

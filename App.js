@@ -105,8 +105,6 @@ export default function App() {
     return true;
   };
 
-  // Downscales the picked image to a 512px square JPEG on web so it always
-  // fits the inline data-URI limit; native keeps the picker's compressed output.
   const resizeForUpload = async (asset) => {
     if (Platform.OS !== 'web' || !asset?.uri) return asset?.uri || null;
     try {
@@ -131,9 +129,6 @@ export default function App() {
     }
   };
 
-  // Try Cloud Storage first (the supported path once a bucket exists); if the
-  // project has no provisioned bucket (404 on Spark plan), store the photo as a
-  // compact data URI directly in the Firestore document instead.
   const uploadPhoto = async (uri, studentId) => {
     const response = await fetch(uri);
     const blob = await response.blob();
@@ -162,8 +157,6 @@ export default function App() {
     }
   };
 
-  // Local image URIs: file:// (native) and blob:/content: (web/native).
-  // Remote URLs and data: URIs are already persisted and must not re-upload.
   const isLocalImage = (uri) => !!uri && /^(file:|blob:|content:)/.test(uri);
 
   const saveStudent = async () => {
@@ -209,8 +202,6 @@ export default function App() {
     setMessage(null);
   };
 
-  // Ask for confirmation with an in-app overlay: Alert.alert is not
-  // implemented on react-native-web, so the old flow silently did nothing.
   const removeStudent = (student) => {
     setMessage(null);
     setPendingDelete(student);
@@ -221,8 +212,7 @@ export default function App() {
     if (!student || deleting) return;
     setDeleting(true);
     try {
-      // Best effort: also remove the profile photo from Cloud Storage
-      // (inline data-URI photos live in the doc itself and need no cleanup).
+
       if (student.profileImageUrl && !student.profileImageUrl.startsWith('data:')) {
         try {
           const objectPath = decodeURIComponent(
@@ -230,7 +220,7 @@ export default function App() {
           ).split('?')[0];
           if (objectPath) await deleteObject(ref(storage, objectPath));
         } catch {
-          // Missing bucket/file shouldn't block the record deletion.
+
         }
       }
       await deleteDoc(doc(db, 'students', student.id));
